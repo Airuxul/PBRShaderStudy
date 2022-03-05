@@ -4,7 +4,7 @@ Shader "MyShader/PBR/DirectLightPBR2"
     {
         _Color ("Color", Color) = (1,1,1,1)
         _Roughness("Roughness",Range(0.02,1))=0.5
-        _Metaness("Metaness",Range(0,1))=0.5
+        _Metallic("Metallic",Range(0,1))=0.5
     	[KeywordEnum(Lambert, Disney)]_Diffuse("Diffuse Mode", Float) = 0
     }
      CGINCLUDE
@@ -104,13 +104,13 @@ Shader "MyShader/PBR/DirectLightPBR2"
             	fixed G=G_Schlick_GGX(n_dot_l,n_dot_v,_Roughness);
 
             	//根据F和金属值计算kd
-            	fixed3 kd=(1-F)*(1-_Metaness);
-                fixed3 diffuse=_Color;
+            	fixed3 oneMinusMetallic=(1-_Metallic);
+                fixed3 diffuse=_Color*oneMinusMetallic;
             	
             	//漫反射
             	//原漫反射
             	#ifdef _DIFFUSE_LAMBERT
-				diffuse *= UNITY_INV_PI*kd;
+				diffuse *= UNITY_INV_PI*(1-F);
             	#endif
             	//Disney漫反射
 				#ifdef _DIFFUSE_Disney
